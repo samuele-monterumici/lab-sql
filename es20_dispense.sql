@@ -5,7 +5,7 @@ anno_costruz INT NOT NULL
 );
 
 CREATE TABLE stazione(
-id_stazione INT PRIMARY KEY AUTO_INCREMENTL,
+id_stazione INT PRIMARY KEY AUTO_INCREMENT,
 nome VARCHAR(30) NOT NULL,
 citta VARCHAR(30) NOT NULL
 );
