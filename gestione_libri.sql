@@ -1,28 +1,36 @@
-CREATE TABLE libro(
-isbn VARCHAR(20) PRIMARY KEY,
-titolo VARCHAR(50) NOT NULL,
-cod_casa_editrice INT NOT NULL,
-n_pagine INT NOT NULL,
-tipologia VARCHAR(20) NOT NULL,
-n_edizione INT NOT NULL,
-prezzo INT NOT NULL,
-anno_pubblicazione DATE NOT NULL
-);
-
-CREATE TABLE tratta(
-id_tratta INT PRIMARY KEY AUTO_INCREMENT,
-stazione_p VARCHAR(50) NOT NULL,
-stazione_a VARCHAR(50)NOT NULL,
-distanza_km INT NOT NULL
-);
-
 CREATE TABLE casa_editrice(
 id_casa_editrice INT PRIMARY KEY AUTO_INCREMENT,
 nome VARCHAR(20) NOT NULL,
-nazione INT NOT NULL,
-data DATE NOT NULL,
-orario_p TIME NOT NULL,
-orario_a TIME NOT NULL,
-FOREIGN KEY (cod_treno) REFERENCES treno(id_treno),
-FOREIGN KEY (cod_tratta) REFERENCES tratta(id_tratta)
+nazione VARCHAR(20),
+anno_fondazione INT,
+pubblica_privata BOOLEAN NOT NULL DEFAULT 0
+);
+
+CREATE TABLE autore(
+id_autore INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(50),
+cognome VARCHAR(50),
+ddn DATE,
+sesso CHAR(1),
+nazionalita VARCHAR(50)
+);
+
+CREATE TABLE libro(
+isbn VARCHAR(13) PRIMARY KEY,
+titolo VARCHAR(50) NOT NULL,
+cod_casa_editrice INT NOT NULL,
+anno_pubblicazione INT,
+n_pagine INT,
+tipologia VARCHAR(20),
+n_edizione INT,
+prezzo DECIMAL(6,2),
+FOREIGN KEY (cod_casa_editrice) REFERENCES casa_editrice(id_casa_editrice)
+);
+
+CREATE TABLE autori_libri(
+isbn_libro VARCHAR(13),
+cod_autore INT,
+PRIMARY KEY (isbn_libro, cod_autore),
+FOREIGN KEY (isbn_libro) REFERENCES libro(isbn),
+FOREIGN KEY (cod_autore) REFERENCES autore(id_autore)
 );
