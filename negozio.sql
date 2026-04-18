@@ -34,13 +34,13 @@
   WHERE 4CTL_prodotti.id_modello=4CTL_modelli_prodotto.id_modello;
 
 --12 Ricostruzione dello scontrino: ID ordine, cognome cliente, nome modello e seriale venduto.
-  SELECT 4CTL_ordini.id_ordine, 4CTL_clienti.cognome, 4CTL_modelli_prodotto.nome, 4CTL_prodotti.cod_seriale 
-  FROM 4CTL_ordini, 4CTL_clienti, 4CTL_modelli_prodotto, 4CTL_prodotti, 4CTL_dettagli_ordine 
+  SELECT o.id_ordine, c.cognome, mp.nome, p.cod_seriale 
+  FROM 4CTL_ordini o, 4CTL_clienti c, 4CTL_modelli_prodotto mp, 4CTL_prodotti p, 4CTL_dettagli_ordine d
   WHERE 1=1 
-  AND 4CTL_ordini.id_ordine=4CTL_dettagli_ordine.id_ordine 
-  AND 4CTL_dettagli_ordine.id_prodotto=4CTL_prodotti.id_prodotto 
-  AND 4CTL_prodotti.id_modello=4CTL_modelli_prodotto.id_modello 
-  AND 4CTL_clienti.id_cliente=4CTL_ordini.id_cliente
+  AND o.id_ordine=d.id_ordine 
+  AND d.id_prodotto=p.id_prodotto 
+  AND p.id_modello=mp.id_modello 
+  AND c.id_cliente=o.id_cliente
   
 --13 Visualizzazione dello stato della garanzia per ogni codice seriale venduto.
   SELECT stato_garanzia, cod_seriale 
