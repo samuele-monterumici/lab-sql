@@ -26,7 +26,7 @@
   SELECT * FROM 4CTL_clienti ORDER BY cognome, nome;
 
 --10 Ricerca di tutti gli ordini effettuati nel mese di giugno 2024.
-  SELECT * FROM 4CTL_ordini WHERE data_ordine LIKE '2024-06%';
+  SELECT * FROM 4CTL_ordini WHERE DATE_FORMAT(data_ordine, '%Y-%m') LIKE '2024-06%';
 
 --11 Elenco dei codici seriali in magazzino associati al nome del relativo modello.
   SELECT cod_seriale, nome 
@@ -62,16 +62,44 @@
   WHERE 4CTL_prodotti.disponibilita='S' 
   GROUP BY categoria
     
---15 Calcolo del totale incassato per ogni cliente basato sulla somma degliordini effettuati.
+--15 Calcolo del totale incassato per ogni cliente basato sulla somma degli ordini effettuati.
+  SELECT cognome, SUM(prezzo_vendita_effettivo), id_prodotto 
+  FROM 4CTL_dettagli_ordine, 4CTL_clienti, 4CTL_ordini 
+  WHERE 4CTL_dettagli_ordine.id_ordine=4CTL_ordini.id_ordine 
+  AND 4CTL_ordini.id_cliente=4CTL_clienti.id_cliente 
+  GROUP BY 4CTL_clienti.cognome
 
 --16 Determinazione del prezzo medio di listino per ogni categoria di prodotto a catalogo.
-    
+  SELECT 4CTL_modelli_prodotto.categoria, AVG(4CTL_modelli_prodotto.prezzo_listino) 
+  FROM 4CTL_modelli_prodotto 
+  GROUP BY 4CTL_modelli_prodotto.categoria
+
 --17 Identificazione del numero di prodotti venduti per ogni tipologia di garanzia (attiva, scaduta, in assistenza).
-    
+  SELECT stato_garanzia, 
+  COUNT(4CTL_garanzie.id_prodotto) 
+  FROM 4CTL_garanzie, 4CTL_prodotti, 4CTL_dettagli_ordine 
+  WHERE 4CTL_garanzie.id_prodotto=4CTL_prodotti.id_prodotto 
+  AND 4CTL_prodotti.id_prodotto = 4CTL_dettagli_ordine.id_prodotto 
+  GROUP BY stato_garanzia
+
 --18 Elenco dei clienti che hanno effettuato una spesa complessiva superiore a 2000€.
-    
+  SELECT 4CTL_clienti.id_cliente, 4CTL_ordini.prezzo_totale_pagato 
+  FROM 4CTL_clienti, 4CTL_ordini 
+  WHERE 1=1 
+  AND 4CTL_clienti.id_cliente = 4CTL_ordini.id_cliente 
+  AND prezzo_totale_pagato>2000;
+
 --19 Identificazione delle categorie che hanno più di 50 prodotti registrati a catalogo.
-    
+  SELECT categoria, 
+  COUNT(4CTL_prodotti.id_prodotto) 
+  FROM 4CTL_modelli_prodotto, 4CTL_prodotti 
+  WHERE 4CTL_modelli_prodotto.id_modello = 4CTL_prodotti.id_modello 
+  GROUP BY categoria
+  HAVING COUNT(4CTL_prodotti.id_prodotto) > 50
+
 --20 Visualizzazione degli ordini il cui prezzo totale è superiore alla media di tutti gli ordini.
-    
+  SELECT id_ordine, prezzo_totale_pagato 
+  FROM 4CTL_ordini 
+  WHERE prezzo_totale_pagato > (SELECT AVG(4CTL_ordini.prezzo_totale_pagato) FROM 4CTL_ordini)
+
 --21 Elenco dei modelli che non sono mai stati venduti (assenti nella tabella dettagli_ordine).
